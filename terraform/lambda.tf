@@ -1,4 +1,4 @@
-module "go_lambda_api_function" {
+module "webapp_go_api" {
   source                            = "terraform-aws-modules/lambda/aws"
   function_name                     = "${var.webapp_name}-api"
   cloudwatch_logs_retention_in_days = 5

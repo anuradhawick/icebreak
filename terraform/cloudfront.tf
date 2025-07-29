@@ -23,24 +23,24 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   enabled             = true
   is_ipv6_enabled     = true
   http_version        = "http2and3"
-  default_root_object = "index.csr.html"
+  default_root_object = "index.html"
 
   custom_error_response {
     response_code      = 200
     error_code         = 404
-    response_page_path = "/index.csr.html"
+    response_page_path = "/index.html"
   }
 
   custom_error_response {
     response_code      = 200
     error_code         = 400
-    response_page_path = "/index.csr.html"
+    response_page_path = "/index.html"
   }
 
   custom_error_response {
     response_code      = 200
     error_code         = 403
-    response_page_path = "/index.csr.html"
+    response_page_path = "/index.html"
   }
 
   default_cache_behavior {

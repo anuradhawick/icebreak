@@ -6,7 +6,7 @@ data "external" "build" {
     build_command     = var.build_command
     webapp_dir        = var.webapp_dir
     build_destination = var.build_destination
-    api_url           = aws_api_gateway_stage.icebreak_api.invoke_url
+    api_url           = aws_api_gateway_stage.webapp_api.invoke_url
   }
   working_dir = path.module
 }

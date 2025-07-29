@@ -15,7 +15,8 @@ import (
 var dynamodbTableName = os.Getenv("DYNAMODB_TABLE_NAME")
 
 func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	fmt.Println("Event Received:", req)
+	eventJson, _ := json.MarshalIndent(req, "", "  ")
+	fmt.Printf("Event Received: %s\n", string(eventJson))
 	var body StartTimerRequest
 
 	if err := json.Unmarshal([]byte(req.Body), &body); err != nil {
@@ -62,7 +63,7 @@ func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 
 	fmt.Printf("Starting timer from %d with duration %d\n", from, duration)
 
-	responseStruct := StartTimerResponse{ID: "ID"}
+	responseStruct := StartTimerResponse{ID: id}
 	responseBytes, _ := json.Marshal(responseStruct)
 
 	return events.APIGatewayProxyResponse{
@@ -73,7 +74,8 @@ func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 }
 
 func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	fmt.Println("Event Received:", req)
+	eventJson, _ := json.Marshal(req)
+	fmt.Printf("Event Received: %s\n", string(eventJson))
 	timerID := req.PathParameters["id"]
 
 	if timerID == "" {
@@ -103,6 +105,16 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 		responseBytes, _ := json.Marshal(responseStruct)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
+			Body:       string(responseBytes),
+			Headers:    map[string]string{"Content-Type": "application/json"},
+		}, nil
+	}
+
+	if res.Item == nil {
+		responseStruct := ErrorResponse{Error: "Timer not found"}
+		responseBytes, _ := json.Marshal(responseStruct)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 404,
 			Body:       string(responseBytes),
 			Headers:    map[string]string{"Content-Type": "application/json"},
 		}, nil
