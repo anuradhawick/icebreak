@@ -10,6 +10,7 @@ import (
 )
 
 var DynamoClient *dynamodb.Client
+var DefaultHeaders = map[string]string{"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
 
 func init() {
 	cfg, err := config.LoadDefaultConfig(context.Background())

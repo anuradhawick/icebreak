@@ -28,7 +28,7 @@ func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
 			Body:       string(responseBytes),
-			Headers:    map[string]string{"Content-Type": "application/json"},
+			Headers:    DefaultHeaders,
 		}, nil
 	}
 
@@ -69,7 +69,7 @@ func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       string(responseBytes),
-		Headers:    map[string]string{"Content-Type": "application/json"},
+		Headers:    DefaultHeaders,
 	}, nil
 }
 
@@ -85,7 +85,7 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
 			Body:       string(responseBytes),
-			Headers:    map[string]string{"Content-Type": "application/json"},
+			Headers:    DefaultHeaders,
 		}, nil
 	}
 
@@ -106,7 +106,7 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       string(responseBytes),
-			Headers:    map[string]string{"Content-Type": "application/json"},
+			Headers:    DefaultHeaders,
 		}, nil
 	}
 
@@ -116,7 +116,7 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 		return events.APIGatewayProxyResponse{
 			StatusCode: 404,
 			Body:       string(responseBytes),
-			Headers:    map[string]string{"Content-Type": "application/json"},
+			Headers:    DefaultHeaders,
 		}, nil
 	}
 
@@ -132,6 +132,6 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       string(responseBytes),
-		Headers:    map[string]string{"Content-Type": "application/json"},
+		Headers:    DefaultHeaders,
 	}, nil
 }

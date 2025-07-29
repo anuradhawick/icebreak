@@ -19,6 +19,21 @@ resource "aws_api_gateway_method" "webapp_root" {
   }
 }
 
+resource "aws_api_gateway_method_response" "webapp_root" {
+  rest_api_id = aws_api_gateway_method.webapp_root.rest_api_id
+  resource_id = aws_api_gateway_method.webapp_root.resource_id
+  http_method = aws_api_gateway_method.webapp_root.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
 resource "aws_api_gateway_integration" "webapp_root" {
   http_method             = aws_api_gateway_method.webapp_root.http_method
   resource_id             = aws_api_gateway_resource.webapp_root.id
@@ -33,6 +48,10 @@ resource "aws_api_gateway_integration_response" "webapp_root" {
   resource_id = aws_api_gateway_resource.webapp_root.id
   http_method = aws_api_gateway_method.webapp_root.http_method
   status_code = "200"
+
+  response_templates = {
+    "application/json" = ""
+  }
 }
 
 resource "aws_lambda_permission" "webapp_api_lambda_permission" {
