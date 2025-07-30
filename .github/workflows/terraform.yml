@@ -52,11 +52,11 @@ jobs:
 
       - name: Terraform Import S3 Bucket Conditionally
         run: |
-          if ! terraform state list | grep -q aws_s3_bucket.apps_bucket; then
+          if terraform state list | grep -q aws_s3_bucket.apps_bucket; then
+            echo "S3 bucket already imported."
+          else
             terraform import aws_s3_bucket.apps_bucket apps-anuradhawick
             echo "S3 bucket imported successfully."
-          else
-            echo "S3 bucket already imported."
           fi
         working-directory: ./terraform
 
