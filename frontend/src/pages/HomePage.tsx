@@ -8,8 +8,10 @@ interface HomePageProps {
 const HomePage: FunctionComponent<HomePageProps> = ({ title }) => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-black text-cyan-300">
-      <h1 className="text-4xl font-bold mb-4">{title}</h1>
-      <p className="text-lg mb-8">Welcome to the IceBreak Group Count Down!</p>
+      <h1 className="text-xl md:text-4xl font-bold mb-4">{title}</h1>
+      <p className="text-sm md:text-lg mb-8">
+        Welcome to the IceBreak Group Count Down!
+      </p>
       <img
         src="/icebreak-logo.png"
         alt="IceBreak Logo"

@@ -2,6 +2,7 @@ import { useState, type FunctionComponent } from "react";
 import DigitalClockEditor from "../components/digital-clockface/DigitalClockEditor";
 import Button from "../components/Button";
 import ErrorAlert from "../components/Error";
+import { useNavigate } from "react-router";
 
 interface StartCountDownPageAPIResponse {
   id?: string;
@@ -9,6 +10,7 @@ interface StartCountDownPageAPIResponse {
 }
 
 const StartCountDownPage: FunctionComponent = () => {
+  const navigate = useNavigate();
   const [countDownTime, setCountDownTime] = useState({
     hours: 0,
     minutes: 0,
@@ -43,6 +45,7 @@ const StartCountDownPage: FunctionComponent = () => {
       if (response.ok) {
         const countdownId = responseData.id;
         console.log("Countdown started successfully:", countdownId);
+        navigate(`/${countdownId}`);
       } else {
         setError(responseData.error || "Failed to start countdown");
         console.error("Failed to start countdown");
@@ -63,25 +66,25 @@ const StartCountDownPage: FunctionComponent = () => {
   };
 
   return (
-    <>
-      <div className="flex flex-col space-y-4 items-center justify-center bg-black h-screen">
-        <h2 className="text-cyan-400 text-6xl drop-shadow-[0_0_20px_rgba(34,211,238,0.8)]">
-          Create Countdown
-        </h2>
-        <DigitalClockEditor onChange={onChange} />
-        <Button
-          label="Start Countdown"
-          onClick={handleCreateCountdown}
-          disabled={disabled}
-        />
-        {error && <ErrorAlert message={error} closed={() => setError(null)} />}
-        {disabled && (
-          <div className="text-cyan-400 italic text-sm">
-            Countdown cannot be started with zero time.
-          </div>
-        )}
-      </div>
-    </>
+    <div className="flex flex-col space-y-4 items-center justify-center bg-black text-cyan-300 h-screen">
+      <h1 className="text-xl md:text-4xl font-bold mb-4">Create Countdown</h1>
+      <p className="text-sm md:text-lg mb-8 px-5 text-center">
+        Set hours, minutes, and seconds for the countdown timer. Click "Start
+        Countdown" to create a new countdown.
+      </p>
+      <DigitalClockEditor onChange={onChange} />
+      <Button
+        label="Start Countdown"
+        onClick={handleCreateCountdown}
+        disabled={disabled}
+      />
+      {error && <ErrorAlert message={error} closed={() => setError(null)} />}
+      {disabled && (
+        <div className="text-cyan-400 italic text-sm">
+          Countdown cannot be started with zero time.
+        </div>
+      )}
+    </div>
   );
 };
 

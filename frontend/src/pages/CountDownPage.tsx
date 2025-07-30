@@ -45,7 +45,11 @@ const CountDownPage: FunctionComponent = () => {
       {loading && <Loader />}
       {!loading && (
         <>
-          <div className="flex flex-col space-y-4 items-center justify-center bg-black h-screen">
+          <div className="flex flex-col space-y-4 items-center justify-center bg-black text-cyan-300 h-screen">
+            <h1 className="text-xl md:text-4xl font-bold mb-4">Countdown</h1>
+            <p className="text-sm md:text-lg mb-8 px-5 text-center">
+              Counting down to the last second of it!
+            </p>
             <DigitalClock
               fromEpochMillis={countDown.from}
               durationMillis={countDown.duration}

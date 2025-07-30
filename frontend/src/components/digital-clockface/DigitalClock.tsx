@@ -50,13 +50,13 @@ const DigitalClock: FunctionComponent<DigitalClockProps> = ({
 
   return (
     <div className="flex items-center justify-center bg-black">
-      <div className="text-6xl md:text-9xl font-mono text-center text-white tracking-widest">
+      <div className="text-lg md:text-5xl lg:text-9xl font-mono text-center text-white tracking-widest">
         {digits.map((char, index) => (
           <span
             key={index}
             className={
               char === ":"
-                ? "mx-2 text-gray-500"
+                ? "mx-0.5 sm:mx-2 text-gray-500"
                 : "px-4 py-2 mx-1 rounded-xl bg-gray-900 text-cyan-400 shadow-[0_0_10px_#22d3ee]"
             }
           >

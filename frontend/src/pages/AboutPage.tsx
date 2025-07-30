@@ -2,7 +2,7 @@ import type { FunctionComponent } from "react";
 
 const AboutPage: FunctionComponent = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-black">
+    <div className="flex flex-col items-center justify-center h-screen bg-black px-5 text-center">
       <img
         src="/icebreak-logo.png"
         alt="IceBreak Logo"
@@ -12,8 +12,7 @@ const AboutPage: FunctionComponent = () => {
         IceBreak is a group countdown timer application built with React.
       </p>
       <p className="text-cyan-300 mt-4">
-        Anuradha Wickramarachchi &copy; {new Date().getFullYear()}. All rights
-        reserved.
+        Anuradha Wickramarachchi ({new Date().getFullYear()}).
       </p>
       <p className="text-cyan-300 mt-4">
         Source code is available on{" "}
