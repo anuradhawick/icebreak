@@ -1,0 +1,63 @@
+name: "Terraform Deploy"
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install Go
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.5" # <-- Choose your required Go version
+
+      # Install Node.js (required for pnpm)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" # <-- Choose your required Node.js version
+
+      # Install pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      # Set up Terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.12.2" # <-- Choose your required Terraform version
+
+      # Configure AWS credentials (update as needed)
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1 # <-- Choose your required AWS region
+
+      # Run Go tests
+      - name: Run Go Tests
+        run: go test -v
+        working-directory: ./backend
+
+      # Terraform commands
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Terraform Import S3 Bucket
+        run: terraform import aws_s3_bucket.apps_bucket apps-anuradhawick
+        working-directory: ./terraform
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./terraform

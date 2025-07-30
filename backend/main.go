@@ -9,15 +9,15 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-var DynamoClient *dynamodb.Client
-var DefaultHeaders = map[string]string{"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
+var dynamoClient DynamoAPI
+var defaultHeaders = map[string]string{"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
 
 func init() {
 	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {
 		panic("unable to load SDK config, " + err.Error())
 	}
-	DynamoClient = dynamodb.NewFromConfig(cfg)
+	dynamoClient = dynamodb.NewFromConfig(cfg)
 }
 
 func main() {

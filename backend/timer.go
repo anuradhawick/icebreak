@@ -15,7 +15,7 @@ import (
 var dynamodbTableName = os.Getenv("DYNAMODB_TABLE_NAME")
 
 func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	eventJson, _ := json.MarshalIndent(req, "", "  ")
+	eventJson, _ := json.Marshal(req)
 	fmt.Printf("Event Received: %s\n", string(eventJson))
 	var body StartTimerRequest
 
@@ -28,7 +28,7 @@ func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
 			Body:       string(responseBytes),
-			Headers:    DefaultHeaders,
+			Headers:    defaultHeaders,
 		}, nil
 	}
 
@@ -52,7 +52,7 @@ func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 		panic("Failed to marshal item: " + err.Error())
 	}
 
-	_, err = DynamoClient.PutItem(ctx, &dynamodb.PutItemInput{
+	_, err = dynamoClient.PutItem(ctx, &dynamodb.PutItemInput{
 		TableName: &dynamodbTableName,
 		Item:      itemMap,
 	})
@@ -69,7 +69,7 @@ func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       string(responseBytes),
-		Headers:    DefaultHeaders,
+		Headers:    defaultHeaders,
 	}, nil
 }
 
@@ -85,7 +85,7 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
 			Body:       string(responseBytes),
-			Headers:    DefaultHeaders,
+			Headers:    defaultHeaders,
 		}, nil
 	}
 
@@ -95,7 +95,7 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 		panic("Failed to marshal timer ID: " + err.Error())
 	}
 
-	res, err := DynamoClient.GetItem(ctx, &dynamodb.GetItemInput{
+	res, err := dynamoClient.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: &dynamodbTableName,
 		Key:       timerIDMap,
 	})
@@ -106,7 +106,7 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       string(responseBytes),
-			Headers:    DefaultHeaders,
+			Headers:    defaultHeaders,
 		}, nil
 	}
 
@@ -116,7 +116,7 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 		return events.APIGatewayProxyResponse{
 			StatusCode: 404,
 			Body:       string(responseBytes),
-			Headers:    DefaultHeaders,
+			Headers:    defaultHeaders,
 		}, nil
 	}
 
@@ -132,6 +132,6 @@ func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       string(responseBytes),
-		Headers:    DefaultHeaders,
+		Headers:    defaultHeaders,
 	}, nil
 }
