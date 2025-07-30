@@ -1,4 +1,4 @@
-name: "Terraform Deploy"
+name: "Test and Deploy"
 
 on:
   release:

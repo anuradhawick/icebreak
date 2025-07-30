@@ -6,6 +6,8 @@ IceBreak in <img src="https://go.dev/images/go-logo-white.svg" style="height:1em
 <img src="frontend/public/icebreak-logo.png" width="400px" style="display: block; margin: 0 auto;">
 </p>
 
+[![Terraform Deploy](https://github.com/anuradhawick/icebreak/actions/workflows/terraform.yml/badge.svg)](https://github.com/anuradhawick/icebreak/actions/workflows/terraform.yml)
+
 Visit: [https://icebreak.anuradhawick.com](https://icebreak.anuradhawick.com)
 
 This website let's your group take breaks together by having a shared timer. No need to message everyone, sync times across time zones. No ambiguity ever!
@@ -15,6 +17,12 @@ This website let's your group take breaks together by having a shared timer. No 
 ## Development Guide
 
 Use pnpm to install react dependencies.
+
+```bash
+cd frontend
+pnpm install
+pnpm run dev
+```
 
 ## Deploying
 
