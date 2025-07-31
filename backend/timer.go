@@ -15,8 +15,7 @@ import (
 var dynamodbTableName = os.Getenv("DYNAMODB_TABLE_NAME")
 
 func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	eventJson, _ := json.Marshal(req)
-	fmt.Printf("Event Received: %s\n", string(eventJson))
+	fmt.Printf("Event Received: %s\n", mustJSON(req))
 	var body StartTimerRequest
 
 	if err := json.Unmarshal([]byte(req.Body), &body); err != nil {
@@ -37,7 +36,7 @@ func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 	id, err := gonanoid.New(8)
 
 	if err != nil {
-		panic(err)
+		return writeError(500, "Failed to generate ID"), nil
 	}
 
 	item := DynamoTimerEntry{
@@ -46,92 +45,44 @@ func StartTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 		Duration: duration,
 		TTL:      from + duration + 60*60*24*3, // 3 days TTL
 	}
-	itemMap, err := attributevalue.MarshalMap(item)
 
-	if err != nil {
-		panic("Failed to marshal item: " + err.Error())
-	}
-
-	_, err = dynamoClient.PutItem(ctx, &dynamodb.PutItemInput{
+	if _, err = dynamoClient.PutItem(ctx, &dynamodb.PutItemInput{
 		TableName: &dynamodbTableName,
-		Item:      itemMap,
-	})
-
-	if err != nil {
+		Item:      mustMarshalMap(item),
+	}); err != nil {
 		panic("Failed to put item in DynamoDB: " + err.Error())
 	}
 
 	fmt.Printf("Starting timer from %d with duration %d\n", from, duration)
-
-	responseStruct := StartTimerResponse{ID: id}
-	responseBytes, _ := json.Marshal(responseStruct)
-
-	return events.APIGatewayProxyResponse{
-		StatusCode: 200,
-		Body:       string(responseBytes),
-		Headers:    defaultHeaders,
-	}, nil
+	return writeSuccess(StartTimerResponse{ID: id}), nil
 }
 
 func GetTimer(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	eventJson, _ := json.Marshal(req)
-	fmt.Printf("Event Received: %s\n", string(eventJson))
+	fmt.Printf("Event Received: %s\n", mustJSON(req))
 	timerID := req.PathParameters["id"]
 
 	if timerID == "" {
-		responseStruct := ErrorResponse{Error: "Timer ID is required"}
-		responseBytes, _ := json.Marshal(responseStruct)
-
-		return events.APIGatewayProxyResponse{
-			StatusCode: 400,
-			Body:       string(responseBytes),
-			Headers:    defaultHeaders,
-		}, nil
+		return writeError(400, "Timer ID is required"), nil
 	}
 
-	timerIDMap, err := attributevalue.MarshalMap(map[string]string{"id": timerID})
-
-	if err != nil {
-		panic("Failed to marshal timer ID: " + err.Error())
-	}
-
+	key := mustMarshalMap(map[string]string{"id": timerID})
 	res, err := dynamoClient.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: &dynamodbTableName,
-		Key:       timerIDMap,
+		Key:       key,
 	})
 
 	if err != nil {
-		responseStruct := ErrorResponse{Error: "Failed to get timer from DynamoDB"}
-		responseBytes, _ := json.Marshal(responseStruct)
-		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Body:       string(responseBytes),
-			Headers:    defaultHeaders,
-		}, nil
+		return writeError(500, "Failed to get timer from DynamoDB"), nil
 	}
 
 	if res.Item == nil {
-		responseStruct := ErrorResponse{Error: "Timer not found"}
-		responseBytes, _ := json.Marshal(responseStruct)
-		return events.APIGatewayProxyResponse{
-			StatusCode: 404,
-			Body:       string(responseBytes),
-			Headers:    defaultHeaders,
-		}, nil
+		return writeError(404, "Timer not found"), nil
 	}
 
 	var item DynamoTimerEntry
-
 	if err := attributevalue.UnmarshalMap(res.Item, &item); err != nil {
-		panic("Failed to unmarshal item: " + err.Error())
+		return writeError(500, "Failed to parse timer data"), nil
 	}
 
-	responseStruct := GetTimerResponse{From: item.From, Duration: item.Duration}
-	responseBytes, _ := json.Marshal(responseStruct)
-
-	return events.APIGatewayProxyResponse{
-		StatusCode: 200,
-		Body:       string(responseBytes),
-		Headers:    defaultHeaders,
-	}, nil
+	return writeSuccess(GetTimerResponse{From: item.From, Duration: item.Duration}), nil
 }
